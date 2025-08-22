@@ -1,0 +1,4 @@
+requests>=2.25.0
+tqdm>=4.60.0
+deepface>=0.0.79
+skin-tone-classifier>=1.2.6
