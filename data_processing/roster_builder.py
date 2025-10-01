@@ -14,10 +14,34 @@ PLAYER_ATTS_OFFSET = 0x0004153E
 PLAYER_ATTS_SIZE = 38
 TEAM_LINEUP_OFFSET = 0x00011A91
 TEAM_LINEUP_SIZE = 423
+PLAYER_PITCHER_OFFSET = 0x0004DFF0
+PLAYER_PITCHER_SIZE = 32
 
 POSITION_MAP = {
     "P": 0, "C": 1, "1B": 2, "2B": 3, "3B": 4, "SS": 5,
     "LF": 6, "CF": 7, "RF": 8
+}
+
+PITCH_MAP = {
+    "4-Seam Fastball": 0x00,
+    "Sinker": 0x01,
+    "Curveball": 0x02,
+    "Slider": 0x03,
+    "Slurve": 0x04,
+    "Splitter": 0x05,
+    "Changeup": 0x06,
+    "Knuckleball": 0x07,
+    "2-Seam Fastball": 0x08,
+    "Cutter": 0x09,
+    # "Circle-Change": 0x0A,
+    # "Palmball": 0x0B,
+    # "Forkball": 0x0C,
+    # "Knuckle-Curve": 0x0D,
+    # "Screwball": 0x0E,
+    # "12-6 Curve": 0x0F,
+    # "Sweeping Curve": 0x10,
+    # "Running Fastball": 0x11,
+    "NONE": 0xFF,
 }
 
 PITCHER_ROLE_MAP = {
@@ -67,6 +91,7 @@ def inject_profiles():
     current_app_offset = PLAYER_APP_OFFSET
     current_atts_offset = PLAYER_ATTS_OFFSET
     current_lineup_offset = TEAM_LINEUP_OFFSET
+    current_pitcher_offset = PLAYER_PITCHER_OFFSET
     total_players = 0
 
     first_lineup = bytearray(data[TEAM_LINEUP_OFFSET:TEAM_LINEUP_OFFSET + TEAM_LINEUP_SIZE])
@@ -204,6 +229,50 @@ def inject_profiles():
                 atts[0x03:0x17] = bytes([50] * 20)
             
             data[current_atts_offset:current_atts_offset + PLAYER_ATTS_SIZE] = atts
+
+            # === Pitcher Attributes ===
+            if mlb_card and len(mlb_card.get("pitches", [])) > 0:
+                pitcher = bytearray(data[current_pitcher_offset:current_pitcher_offset + PLAYER_PITCHER_SIZE])
+
+                pitches = [
+                    PITCH_MAP.get(mlb_card.get("pitches", [])[0].get("name", ""), 0xFF),
+                    mlb_card.get("pitches", [])[0].get("speed", 0),
+                    mlb_card.get("pitches", [])[0].get("movement", 0),
+                    mlb_card.get("pitches", [])[0].get("control", 0),
+                    PITCH_MAP.get(mlb_card.get("pitches", [])[1].get("name", ""), 0xFF) if len(mlb_card.get("pitches", [])) > 1 else 0xFF,
+                    mlb_card.get("pitches", [])[1].get("speed", 0) if len(mlb_card.get("pitches", [])) > 1 else 0,
+                    mlb_card.get("pitches", [])[1].get("movement", 0) if len(mlb_card.get("pitches", [])) > 1 else 0,
+                    mlb_card.get("pitches", [])[1].get("control", 0) if len(mlb_card.get("pitches", [])) > 1 else 0,
+                    PITCH_MAP.get(mlb_card.get("pitches", [])[2].get("name", ""), 0xFF) if len(mlb_card.get("pitches", [])) > 2 else 0xFF,
+                    mlb_card.get("pitches", [])[2].get("speed", 0) if len(mlb_card.get("pitches", [])) > 2 else 0,
+                    mlb_card.get("pitches", [])[2].get("movement", 0) if len(mlb_card.get("pitches", [])) > 2 else 0,
+                    mlb_card.get("pitches", [])[2].get("control", 0) if len(mlb_card.get("pitches", [])) > 2 else 0,
+                    PITCH_MAP.get(mlb_card.get("pitches", [])[3].get("name", ""), 0xFF) if len(mlb_card.get("pitches", [])) > 3 else 0xFF,
+                    mlb_card.get("pitches", [])[3].get("speed", 0) if len(mlb_card.get("pitches", [])) > 3 else 0,
+                    mlb_card.get("pitches", [])[3].get("movement", 0) if len(mlb_card.get("pitches", [])) > 3 else 0,
+                    mlb_card.get("pitches", [])[3].get("control", 0) if len(mlb_card.get("pitches", [])) > 3 else 0,
+                    PITCH_MAP.get(mlb_card.get("pitches", [])[4].get("name", ""), 0xFF) if len(mlb_card.get("pitches", [])) > 4 else 0xFF,
+                    mlb_card.get("pitches", [])[4].get("speed", 0) if len(mlb_card.get("pitches", [])) > 4 else 0,
+                    mlb_card.get("pitches", [])[4].get("movement", 0) if len(mlb_card.get("pitches", [])) > 4 else 0,
+                    mlb_card.get("pitches", [])[4].get("control", 0) if len(mlb_card.get("pitches", [])) > 4 else 0,
+                    PITCH_MAP.get(mlb_card.get("pitches", [])[5].get("name", ""), 0xFF) if len(mlb_card.get("pitches", [])) > 5 else 0xFF,
+                    mlb_card.get("pitches", [])[5].get("speed", 0) if len(mlb_card.get("pitches", [])) > 5 else 0,
+                    mlb_card.get("pitches", [])[5].get("movement", 0) if len(mlb_card.get("pitches", [])) > 5 else 0,
+                    mlb_card.get("pitches", [])[5].get("control", 0) if len(mlb_card.get("pitches", [])) > 5 else 0,
+                ]
+
+                pitcher[0x00:0x18] = bytes(pitches)
+                pitcher[0x18] = mlb_card.get("stamina", 50)
+                pitcher[0x19] = mlb_card.get("pitching_clutch", 50)
+                pitcher[0x1A] = mlb_card.get("hits_per_bf", 50)
+                pitcher[0x1B] = mlb_card.get("hr_per_bf", 50)
+                pitcher[0x1C] = mlb_card.get("k_per_bf", 50)
+                pitcher[0x1D] = mlb_card.get("bb_per_bf", 50)
+                pitcher[0x1E] = 0x00
+                pitcher[0x1F] = 0x00
+
+                data[current_pitcher_offset:current_pitcher_offset + PLAYER_PITCHER_SIZE] = pitcher
+                current_pitcher_offset += PLAYER_PITCHER_SIZE
 
             # Move to next player position
             current_profile_offset += PLAYER_PROFILE_SIZE

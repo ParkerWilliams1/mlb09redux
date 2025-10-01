@@ -59,15 +59,20 @@ def fetch_all_mlb_cards(include_attributes=None):
             if len(cards_list) == 1:
                 unique_cards.append(cards_list[0])
             else:
-                # Sort by OVR descending and keep highest
-                sorted_cards = sorted(cards_list, key=lambda x: x['ovr'], reverse=True)
+                # Prioritize "Live" series, then sort by OVR descending
+                sorted_cards = sorted(cards_list, 
+                                    key=lambda x: (
+                                        x['series'] == 'Live',  # True (1) first for Live series
+                                        -x['ovr']  # Then higher OVR first
+                                    ), reverse=True)  # Reverse to get True first
                 unique_cards.append(sorted_cards[0])
                 duplicates_removed += len(cards_list) - 1
                 
                 # Print duplicate info
                 print(f"\nDuplicate cards for {player_name}:")
                 for i, card in enumerate(sorted_cards):
-                    print(f"  {i+1}. OVR {card['ovr']} | {card['series']} | {card['team']} | UUID: {card['uuid']}")
+                    priority_indicator = "★" if i == 0 else " "
+                    print(f"  {priority_indicator} {i+1}. OVR {card['ovr']} | {card['series']} | {card['team']} | UUID: {card['uuid']}")
         
         print(f"\nTotal duplicates removed: {duplicates_removed}")
         return unique_cards
@@ -97,6 +102,7 @@ def fetch_all_mlb_cards(include_attributes=None):
 attributes = [
     "name",
     "ovr",
+    "series",
     "display_position",
     "display_secondary_positions",
     "bat_hand",
@@ -121,7 +127,12 @@ attributes = [
     "baserunning_ability",
     "baserunning_aggression",
     "stamina",
-    "pitches"
+    "pitches",
+    "pitching_clutch",
+    "hits_per_bf",
+    "k_per_bf",
+    "bb_per_bf",
+    "hr_per_bf",
 ]
 
 # Example usage - only keep these attributes:
