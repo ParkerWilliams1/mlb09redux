@@ -3,3 +3,7 @@ jsons/
 vision/
 rosters/
 default_roster.json
+visual_analysis/dataset/eyes/*
+!visual_analysis/dataset/eyes/.gitkeep
+visual_analysis/dataset/beard/*
+!visual_analysis/dataset/beard/.gitkeep

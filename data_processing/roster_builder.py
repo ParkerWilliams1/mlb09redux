@@ -1,7 +1,8 @@
 import json
 import re
 
-json_file = 'jsons/combined_players.json'
+# json_file = 'jsons/combined_players.json'
+json_file = '../../../Courses/MachineLearning/final-project/mlb_players_with_appearance.json'
 hex_file = 'rosters/default_roster.mlb'
 output_file = 'roster.mlb'
 
@@ -189,10 +190,33 @@ def inject_profiles():
             app[0x0D:0x0F] = bytes([0x2f, 0x0d])
 
             # Feature Data
-            # if player.get("Beard_Style"):
-            #     app[0x0F:0x13] = bytes([0x00, 0x00, player.get("Beard_Style"), 0x00])
-            # else:
-            #     app[0x0F:0x13] = bytes([0x00, 0x00, 0x13, 0x00])
+            appearance = player.get("PlayerAppearance", {})
+            eye_color = appearance.get("EyeColor", "").lower()
+            beard_type = appearance.get("BeardType", "")
+            feature_bytes = bytes([0x00, 0x00, 0x00, 0x00])  # default (clean shaven, brown eyes)
+
+            if eye_color == "brown" and beard_type == "full":
+                feature_bytes = bytes([0x11, 0x00, 0x00, 0x00])
+            elif eye_color == "blue" and beard_type == "full":
+                feature_bytes = bytes([0x10, 0x10, 0x00, 0x00])
+            elif eye_color == "brown" and beard_type == "goatee":
+                feature_bytes = bytes([0x00, 0x00, 0x08, 0x00])
+            elif eye_color == "blue" and beard_type == "goatee":
+                feature_bytes = bytes([0x00, 0x10, 0x08, 0x00])
+            elif eye_color == "brown" and beard_type == "stubble":
+                feature_bytes = bytes([0x08, 0x00, 0x00, 0x00])
+            elif eye_color == "blue" and beard_type == "stubble":
+                feature_bytes = bytes([0x08, 0x10, 0x00, 0x00])
+            elif eye_color == "brown" and beard_type == "mustache":
+                feature_bytes = bytes([0x00, 0x00, 0x01, 0x00])
+            elif eye_color == "blue" and beard_type == "mustache":
+                feature_bytes = bytes([0x01, 0x10, 0x01, 0x00])
+            elif eye_color == "brown" and beard_type == "none":
+                feature_bytes = bytes([0x01, 0x00, 0x00, 0x00])
+            elif eye_color == "blue" and beard_type == "none":
+                feature_bytes = bytes([0x01, 0x10, 0x00, 0x00])
+            
+            app[0x0F:0x13] = feature_bytes
 
             data[current_app_offset:current_app_offset + PLAYER_APP_SIZE] = app
 

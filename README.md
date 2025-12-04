@@ -1,26 +1,33 @@
 # MLB 09 Redux
 
-MLB 09 Redux is a project that brings **MLB 09: The Show** (PS2) into the modern era by injecting over **1,200 current MLB players** directly into the game’s save files. 
+MLB 09 Redux is a project that brings **MLB 09: The Show** (PS2) into the modern era by injecting over **1,200 current MLB players** directly into the game's save files. 
 
-![screenshot](screen.png)
+![screenshot](assets/screen.png)
 
-The project uses **Python**, official **MLB APIs**, and **computer vision** with [DeepFace](https://github.com/serengil/deepface) to generate accurate player attributes, appearances, and rosters.
+The project uses **Python**, official **MLB APIs**, and **computer vision** with [InsightFace](https://github.com/deepinsight/insightface) to generate accurate player attributes, appearances, and rosters.
 
 ## Features
-- Injects **1,200+ real MLB players** into a MLB 09: The Show (PS2).
+- Injects **1,200+ real MLB players** into MLB 09: The Show (PS2).
 - Pulls live player data from the **MLB and MLB The Show APIs**.
 - Generates accurate:
   - Names  
   - Positions  
   - Ratings  
   - Height & weight  
-  - Skin tone & ethnicity (via DeepFace analysis)
+  - **Facial hair classification** (full beard, goatee, mustache, stubble, clean shaven)
+  - **Eye color detection** (brown, blue)
+  - Skin tone & ethnicity (via facial analysis)
+- **Machine learning classifiers** trained on custom datasets for facial feature recognition.
+- **80.9% revised accuracy** on beard classification with logical pairing allowances.
 - Fully automated player injection into **game hex save files**.
 - Breathing new life into a beloved baseball game.
 
 ## Tech Stack
 - **Python** – scripting and automation
 - **DeepFace** – skin tone & ethnicity classification
+- **InsightFace** – facial embedding extraction
+- **scikit-learn** – Logistic Regression classifiers
+- **OpenCV** – image processing
 - **MLB API & MLB The Show API** – real player data
 - **Hex file manipulation** – direct save file editing
 
@@ -28,14 +35,50 @@ The project uses **Python**, official **MLB APIs**, and **computer vision** with
 1. **Fetch Player Data:**  
    Python scripts query the MLB APIs to retrieve up-to-date player stats and information.
 
-2. **Analyze Player Images:**  
-   DeepFace processes player photos to determine **skin tone and ethnicity**, ensuring realistic in-game representations.
+2. **Analyze Player Ethnicity:**
+	DeepFace processes player photos to determine **skin tone and ethnicity**, ensuring realistic in-game representations.
 
-3. **Generate Injection Data:**  
-   Scripts format player information into the exact byte structure required for MLB 09 save files.
+3. **Train Facial Feature Classifiers:**
+   - **Beard Classification:** Five categories (full, goatee, mustache, none, stubble) with 68.3% standard accuracy, 80.9% revised accuracy
+   - **Eye Color Classification:** Near-perfect accuracy on trained datasets
+   - InsightFace extracts facial embeddings from our custom datasets
+   - Logistic Regression models are trained on these embeddings
 
-4. **Inject into Game Saves:**  
+4. **Classify MLB Player Images:**
+   - InsightFace processes MLB player headshots to extract facial embeddings
+   - Trained models classify each player's **beard style** and **eye color**
+
+5. **Inject into Game Saves:**  
    Final data is written directly into the game’s hex files, replacing outdated players with the **current 2025 MLB roster**.
+
+## Facial Feature Classification System
+
+### Beard Styles (5 Categories)
+- **Full beard** – Complete facial hair coverage
+- **Goatee** – Chin beard with mustache
+- **Mustache** – Upper lip hair only
+- **None** – Clean shaven
+- **Stubble** – Short, grown-out beard
+
+### Eye Colors
+- **Brown** – Most common eye color
+- **Blue** – Light-colored eyes
+
+### Model Performance
+- **Beard Classifier:** 68.3% standard accuracy, 80.9% revised accuracy (allowing stubble↔none and goatee↔full confusion)
+- **Eye Color Classifier:** ~100% accuracy on validation data
+- **Confusion Matrix Analysis:** Detailed breakdown of classification performance
+
+## Visual Comparison: Real Player vs. In-Game Representation
+
+![Player Comparison Example 1](assets/Trout.jpg)
+*Mike Trout*
+
+![Player Comparison Example 2](assets/Betts.jpg)
+*Mookie Betts*
+
+![Player Comparison Example 3](assets/Banda.jpg)
+*Anthony Banda*
 
 ## Example Output
 Before → After  
@@ -44,6 +87,7 @@ Before → After
 <!-- ## Demonstration -->
 <!-- Check out the project in action: [YouTube Demonstration](https://www.youtube.com) -->
 ## Future Improvements
+- Expand facial feature classification
 - Add support for free agent players.
 - Update team textures.
 - Build a simple GUI for roster injection.

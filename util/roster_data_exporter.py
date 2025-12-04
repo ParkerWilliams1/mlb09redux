@@ -1,19 +1,20 @@
 import json
 
 # === Set file path and base offsets ===
-mlb_file_path = "rosters/rtts.mlb"
+# mlb_file_path = "rosters/rtts.mlb"
+mlb_file_path = "../../../Desktop/roster.mlb"
 # == Roster File ==
-# player_offset = 0x0001CA90
-# player_atts_offset = 0x0004153E
-# player_app_offset = 0x0003AFDB
-# player_pitcher_offset = 0x0004DFF0
-output_path = "rtts.json"
+player_offset = 0x0001CA90
+player_atts_offset = 0x0004153E
+player_app_offset = 0x0003AFDB
+player_pitcher_offset = 0x0004DFF0
+output_path = "FaceRoster.json"
 
 # == RTTS File ==
-player_offset = 0x00026914
-player_atts_offset = 0x0004B3C2
-player_app_offset = 0x00044E5F
-player_pitcher_offset = 0x00057E74
+# player_offset = 0x00026914
+# player_atts_offset = 0x0004B3C2
+# player_app_offset = 0x00044E5F
+# player_pitcher_offset = 0x00057E74
 
 PLAYER_LAYOUT = [
     ("PLAYER_ID", 2), ("PLAYER_FLAGS", 2), ("FirstName", 16), ("LastName", 16),
