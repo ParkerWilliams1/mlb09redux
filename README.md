@@ -92,6 +92,54 @@ Before → After
 - Update team textures.
 - Build a simple GUI for roster injection.
 
+## File Structure
+
+```
+mlb-09-redux/
+├── roster.mlb                    # Generated roster file for game injection
+├── README.md                     # Project documentation
+├── requirements.txt              # Python dependencies
+├── .gitignore                    # Git exclusion rules
+├── assets/                       # Visual assets and sample images
+│   ├── Banda.jpg
+│   ├── Betts.jpg
+│   ├── screen.png
+│   └── Trout.jpg
+├── data_collection/              # MLB API integration
+│   ├── mlb_api.py               # Main API client
+│   └── mlb_cards.py             # The Show card data collection
+├── data_processing/              # Player data aggregation and formatting
+│   ├── combined_players.py      # Merge data from multiple sources
+│   └── roster_builder.py        # Generate final roster structure
+├── mlb_headshots/               # Downloaded MLB player images (1,200+)
+├── rosters/                     # Generated roster files
+├── util/                        # Utility functions and helpers
+│   ├── roster_data_exporter.py  # Export roster data for game injection
+│   └── utility.py               # Common utility functions
+└── visual_analysis/             # Core ML pipeline for facial features
+    ├── classify_all.py          # Main classification pipeline
+    ├── ethnicity_analyzer.py    # Ethnicity analysis using DeepFace
+    ├── extract_embeddings.py    # InsightFace embedding extraction
+    ├── get_beards.py            # Beard-specific processing
+    ├── skin_tone_analyzer.py    # Skin tone classification
+    ├── train_attribute_models.py # Train beard and eye classifiers
+    ├── classifiers/             # Serialized trained models
+    │   ├── beard.pkl           # Beard style classifier
+    │   ├── beard_labels.pkl    # Beard label encoder
+    │   ├── eye_color.pkl       # Eye color classifier
+    │   └── eye_color_labels.pkl # Eye color label encoder
+    ├── dataset/                 # Training datasets
+    │   ├── beard/              # 5 beard categories
+    │   └── eyes/               # Eye color categories
+    ├── embeddings/              # Extracted facial embeddings
+    │   ├── beard.npz           # Beard training embeddings
+    │   └── eye_color.npz       # Eye color training embeddings
+    └── visualizations/          # Performance analysis and reporting
+        ├── visualize_beards.py  # Beard classifier evaluation
+        ├── visualize_eyes.py    # Eye color classifier evaluation
+        └── visualize_facial_data.py # Combined facial feature analysis
+```
+
 ## License
 This project is for **educational purposes only**.  
 All MLB player data is property of **Major League Baseball** and **MLB The Show**.
